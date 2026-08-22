@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMR Yield Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="app-header">
+    <div class="header-top">
+      <div class="title-block">
+        <h1>NMR Yield Calculator</h1>
+        <p class="subtitle">内部標準法による¹H / ¹⁹F NMR収率計算</p>
+      </div>
+
+      <div class="nucleus-toggle" role="tablist" aria-label="測定核の選択">
+        <button type="button" class="nucleus-btn is-active" data-nucleus="1H" role="tab" aria-selected="true">¹H</button>
+        <button type="button" class="nucleus-btn" data-nucleus="19F" role="tab" aria-selected="false">¹⁹F</button>
+      </div>
+    </div>
+
+    <svg class="spectrum-divider" viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="0" y1="80" x2="1000" y2="80" class="baseline"/>
+      <path class="trace" d="M0,80
+        L230,80 L242,80
+        C 248,80 250,20 256,20 C 262,20 264,80 270,80
+        L 340,80
+        C 344,80 346,58 349,58 C 352,58 354,80 358,80
+        L 640,80
+        C 646,80 648,10 656,10 C 664,10 666,80 672,80
+        C 676,80 678,42 681,42 C 684,42 686,80 690,80
+        L1000,80" fill="none"/>
+      <g class="peak-label peak-label--is" transform="translate(263,10)">
+        <text text-anchor="middle">IS</text>
+      </g>
+      <g class="peak-label peak-label--analyte" transform="translate(663,-2)">
+        <text text-anchor="middle">Analyte</text>
+      </g>
+    </svg>
+  </header>
+
+  <main class="layout">
+
+    <section class="panel form-panel">
+
+      <div class="panel-section">
+        <h2><span class="section-index">01</span>内部標準 (Internal Standard)</h2>
+
+        <div class="field">
+          <label for="is-select">内部標準化合物</label>
+          <select id="is-select"></select>
+        </div>
+
+        <p class="compound-meta">CAS No. <span id="is-cas">—</span></p>
+
+        <div class="field">
+          <label for="is-signal">基準シグナル</label>
+          <select id="is-signal"></select>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="is-n">シグナルのH/F数 <span class="unit">N<sub>IS</sub></span></label>
+            <input type="number" id="is-n" inputmode="numeric" step="1" min="1" placeholder="9">
+          </div>
+          <div class="field">
+            <label for="is-mw">分子量 <span class="unit">MW / g·mol⁻¹</span></label>
+            <input type="number" id="is-mw" inputmode="decimal" step="any" min="0" placeholder="168.19">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="is-mass">内部標準 質量 <span class="unit">mass / mg</span></label>
+            <input type="number" id="is-mass" inputmode="decimal" step="any" min="0" placeholder="8.41">
+          </div>
+          <div class="field">
+            <label for="is-mmol">内部標準量 <span class="unit">n<sub>IS</sub> / mmol</span></label>
+            <input type="number" id="is-mmol" inputmode="decimal" step="any" min="0" placeholder="0.0500">
+          </div>
+        </div>
+        <p class="hint">質量とmmolはMWを使って自動的に相互変換されます(最後に編集した方を優先)。MW未入力の場合は連動しません。</p>
+
+        <p class="hint">基準シグナルの積分値は <strong>I<sub>IS</sub> = 1</strong> として扱います。</p>
+      </div>
+
+      <div class="panel-section">
+        <h2><span class="section-index">02</span>生成物 (Product)</h2>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="product-integral">Product integral <span class="unit">I<sub>analyte</sub></span></label>
+            <input type="number" id="product-integral" inputmode="decimal" step="any" min="0" placeholder="1.00">
+          </div>
+          <div class="field">
+            <label for="product-n">Product H/F数 <span class="unit">N<sub>analyte</sub></span></label>
+            <input type="number" id="product-n" inputmode="numeric" step="1" min="1" placeholder="2">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="theoretical-mmol">理論生成量 <span class="unit">mmol</span></label>
+          <input type="number" id="theoretical-mmol" inputmode="decimal" step="any" min="0" placeholder="0.300">
+        </div>
+
+        <div class="field">
+          <label for="product-mw">生成物 分子量 <span class="unit">MW / g·mol⁻¹ (任意)</span></label>
+          <input type="number" id="product-mw" inputmode="decimal" step="any" min="0" placeholder="例: 254.28">
+        </div>
+        <p class="hint">分子量を入力すると、算出されたn(analyte)から対応する質量(mg)も計算します。</p>
+      </div>
+
+      <button type="button" id="reset-btn" class="ghost-btn">入力をリセット</button>
+    </section>
+
+    <aside class="panel readout-panel">
+      <div class="readout-screen">
+        <div class="readout-top">
+          <span class="readout-tag" id="readout-nucleus-tag">¹H NMR YIELD</span>
+          <span class="readout-dot" id="readout-status" aria-hidden="true"></span>
+        </div>
+
+        <div class="readout-value-block">
+          <span class="readout-value" id="yield-value">—</span>
+          <span class="readout-value-unit">%</span>
+        </div>
+
+        <div class="readout-divider"></div>
+
+        <div class="readout-steps" id="calc-steps">
+          <p class="steps-placeholder">値を入力すると、ここに計算過程が表示されます。</p>
+        </div>
+      </div>
+
+      <p class="readout-note">この計算はあくまで参考値です。積分値・H/F数・分子量を再確認してください。</p>
+    </aside>
+
+  </main>
+
+  <footer class="app-footer">
+    <span>NMR Yield Calculator — v1 (local, no data stored)</span>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
