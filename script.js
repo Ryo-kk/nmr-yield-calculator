@@ -288,7 +288,9 @@ const els = {
   theoreticalMmol: document.getElementById("theoretical-mmol"),
   productMw: document.getElementById("product-mw"),
   resetBtn: document.getElementById("reset-btn"),
+  yieldCopyBtn: document.getElementById("yield-copy-btn"),
   yieldValue: document.getElementById("yield-value"),
+  copyFeedback: document.getElementById("copy-feedback"),
   calcSteps: document.getElementById("calc-steps"),
   readoutTag: document.getElementById("readout-nucleus-tag"),
   readoutStatus: document.getElementById("readout-status"),
@@ -299,6 +301,33 @@ let currentNucleus = "1H";
 // stays authoritative when the molecular weight changes (preset switch,
 // manual MW edit, etc).
 let lastEditedAmount = null; // "mass" | "mmol" | null
+let copyFeedbackTimer = null;
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  const copied = document.execCommand("copy");
+  textarea.remove();
+  if (!copied) throw new Error("Copy command failed");
+}
+
+function showCopyFeedback(message) {
+  clearTimeout(copyFeedbackTimer);
+  els.copyFeedback.textContent = message;
+  els.copyFeedback.classList.add("is-visible");
+  copyFeedbackTimer = setTimeout(() => {
+    els.copyFeedback.classList.remove("is-visible");
+  }, 1600);
+}
 
 /* ==========================================================================
    Number formatting helpers
@@ -519,6 +548,7 @@ function runCalculation() {
     els.yieldValue.textContent = "—";
     els.yieldValue.classList.add("is-empty");
     els.readoutStatus.classList.remove("is-live");
+    els.yieldCopyBtn.disabled = true;
     els.calcSteps.innerHTML = `<p class="steps-placeholder">値を入力すると、ここに計算過程が表示されます。</p>`;
     return;
   }
@@ -531,6 +561,7 @@ function runCalculation() {
   els.yieldValue.classList.remove("is-empty");
   els.yieldValue.textContent = fmt(yieldPct, 1);
   els.readoutStatus.classList.add("is-live");
+  els.yieldCopyBtn.disabled = false;
 
   let stepsHtml = `
     <div class="step-line step-label">n(analyte) = n(IS) × [I(analyte)/N(analyte)] / [I(IS)/N(IS)]</div>
@@ -561,6 +592,16 @@ function runCalculation() {
 [els.productIntegral, els.productN, els.theoreticalMmol, els.productMw].forEach(
   (input) => input.addEventListener("input", runCalculation)
 );
+
+els.yieldCopyBtn.addEventListener("click", async () => {
+  if (els.yieldCopyBtn.disabled) return;
+  try {
+    await copyText(els.yieldValue.textContent);
+    showCopyFeedback("コピーしました");
+  } catch {
+    showCopyFeedback("コピーできませんでした");
+  }
+});
 
 els.resetBtn.addEventListener("click", () => {
   els.isMass.value = "";

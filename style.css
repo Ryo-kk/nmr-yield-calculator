@@ -354,9 +354,53 @@ select option {
 
 .readout-value-block {
   display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.readout-value-button {
+  display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  margin-top: 14px;
+  min-width: 0;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: copy;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.readout-value-button:not(:disabled):hover {
+  background: #ffffff0d;
+  border-color: #ffffff20;
+}
+
+.readout-value-button:not(:disabled):focus-visible {
+  outline: 2px solid var(--violet);
+  outline-offset: 3px;
+}
+
+.readout-value-button:disabled {
+  cursor: default;
+}
+
+.copy-feedback {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #57e0a8;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  white-space: nowrap;
+}
+
+.copy-feedback.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .readout-value {

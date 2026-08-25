@@ -128,8 +128,12 @@
         </div>
 
         <div class="readout-value-block">
-          <span class="readout-value" id="yield-value">—</span>
-          <span class="readout-value-unit">%</span>
+          <button type="button" class="readout-value-button" id="yield-copy-btn" disabled
+            aria-label="NMR収率をコピー" title="NMR収率をコピー">
+            <span class="readout-value" id="yield-value">—</span>
+            <span class="readout-value-unit">%</span>
+          </button>
+          <span class="copy-feedback" id="copy-feedback" role="status" aria-live="polite"></span>
         </div>
 
         <div class="readout-divider"></div>
