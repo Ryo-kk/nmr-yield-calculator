@@ -471,6 +471,7 @@ function setNucleus(nucleus) {
     btn.classList.toggle("is-active", active);
     btn.setAttribute("aria-selected", String(active));
   });
+  document.documentElement.dataset.nucleus = nucleus;
   const symbol = nucleus === "1H" ? "¹H" : "¹⁹F";
   els.readoutTag.textContent = `${symbol} NMR YIELD`;
   populateStandardSelect();
