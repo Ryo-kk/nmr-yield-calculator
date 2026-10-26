@@ -10,10 +10,10 @@
   --line: #dbe3ea;
   --line-strong: #c3ceD8;
 
-  --teal: #0e7c86;
-  --teal-dim: #0e7c8622;
-  --violet: #6d4aff;
-  --violet-dim: #6d4aff1a;
+  /* Nucleus-dependent accents (1H = teal / violet). Overridden for 19F below. */
+  --accent: #0e7c86;
+  --accent-dim: #0e7c8622;
+  --accent-2: #6d4aff;
   --amber: #c98a1c;
 
   --screen-bg: #101820;
@@ -27,6 +27,16 @@
 
   --font-ui: "IBM Plex Sans JP", "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* 19F mode: warm orange theme so it is never confused with 1H */
+:root[data-nucleus="19F"] {
+  --paper: #fbf3ec;
+  --line: #ecdccf;
+  --line-strong: #dcc3b0;
+  --accent: #d2570f;
+  --accent-dim: #d2570f22;
+  --accent-2: #ff7a2e;
 }
 
 * { box-sizing: border-box; }
@@ -104,7 +114,7 @@ body {
 .nucleus-btn:hover { color: var(--ink); }
 
 .nucleus-btn.is-active {
-  background: var(--ink);
+  background: var(--accent);
   color: #fff;
 }
 
@@ -123,7 +133,7 @@ body {
 }
 
 .spectrum-divider .trace {
-  stroke: var(--teal);
+  stroke: var(--accent);
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -136,8 +146,8 @@ body {
   letter-spacing: 0.04em;
 }
 
-.spectrum-divider .peak-label--is text { fill: var(--teal); }
-.spectrum-divider .peak-label--analyte text { fill: var(--violet); }
+.spectrum-divider .peak-label--is text { fill: var(--accent); }
+.spectrum-divider .peak-label--analyte text { fill: var(--accent-2); }
 
 /* ==========================================================================
    Layout
@@ -177,7 +187,7 @@ body {
   font-size: 11px;
   font-weight: 600;
   color: #fff;
-  background: var(--teal);
+  background: var(--accent);
   border-radius: 4px;
   padding: 2px 6px;
   letter-spacing: 0.02em;
@@ -239,8 +249,8 @@ select {
 input[type="number"]:focus,
 select:focus {
   outline: none;
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px var(--teal-dim);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
 input[type="number"]::-webkit-inner-spin-button {
@@ -249,8 +259,8 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input.is-locked {
   color: var(--ink-dim);
-  background: var(--teal-dim);
-  border-color: var(--teal);
+  background: var(--accent-dim);
+  border-color: var(--accent);
 }
 
 .compound-meta {
@@ -323,6 +333,7 @@ select option {
   color: var(--screen-text);
   padding: 22px 22px 18px;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-top: 4px solid var(--accent);
 }
 
 .readout-top {
@@ -336,7 +347,7 @@ select option {
   font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--screen-text-dim);
+  color: var(--accent-2);
 }
 
 .readout-dot {
@@ -380,7 +391,7 @@ select option {
 }
 
 .readout-value-button:not(:disabled):focus-visible {
-  outline: 2px solid var(--violet);
+  outline: 2px solid var(--accent-2);
   outline-offset: 3px;
 }
 
@@ -409,7 +420,7 @@ select option {
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.01em;
-  color: var(--violet);
+  color: var(--accent-2);
   word-break: break-all;
 }
 
@@ -454,7 +465,7 @@ select option {
 }
 
 .readout-steps .step-result {
-  color: var(--violet);
+  color: var(--accent-2);
   font-weight: 600;
 }
 
